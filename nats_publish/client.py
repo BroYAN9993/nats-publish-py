@@ -29,5 +29,13 @@ class NatsPublish(object):
         self.sock.sendall(bytes(d, 'utf-8'))
 
     def publish(self, msg="hello world", subject="", opt_reply=""):
+        print(f"Send {msg} to {subject}")
         msg = str(msg)
-        self.send_command("PUB {} {} {}{}{}{}".format(subject, opt_reply, len(msg), CR_LF, msg, CR_LF))
+        data = "PUB {} {} {}{}{}{}".format(subject, opt_reply, len(msg), CR_LF, msg, CR_LF)
+        try:
+            self.send_command(data)
+        except:
+            print("Send failed")
+            self.sock = self.setup_socket()
+            print("Reconnected to socket")
+            self.send_command(data) 
